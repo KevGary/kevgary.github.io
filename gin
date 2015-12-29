@@ -1,0 +1,26 @@
+                                   List of databases
+        Name        | Owner | Encoding |   Collate   |    Ctype    | Access privileges 
+--------------------+-------+----------+-------------+-------------+-------------------
+ Home               | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ apartmentsocialapi | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ avidapi            | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ blog_development   | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ blog_test          | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ chess_db           | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ chessapi           | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ java_lamp_db       | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ memoriesapp        | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ moviesapp          | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ postgres           | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ restaurantapp      | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ supp               | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ taco_types         | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ tacos              | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ template0          | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/Home          +
+                    |       |          |             |             | Home=CTc/Home
+ template1          | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/Home          +
+                    |       |          |             |             | Home=CTc/Home
+ test_db            | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+ weatherapp         | Home  | UTF8     | en_US.UTF-8 | en_US.UTF-8 | 
+(19 rows)
+
