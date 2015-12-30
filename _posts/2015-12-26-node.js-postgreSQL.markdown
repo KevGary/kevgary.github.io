@@ -4,3 +4,364 @@ title:  "PostgreSQL in Node.js"
 date:   2015-12-26 14:35:29 -0400
 categories: tutorials
 ---
+####Source: [https://github.com/KevGary/node.js-postgresql-demo](https://github.com/KevGary/node.js-postgresql-demo)
+
+##Overview
+
+##Getting Started
+Follow along in the tutorial by using the express generator with appropriate flags:
+{% highlight bash %}
+$ express node.js-postgresql-demo --git
+$ cd node.js-postgresql-demo
+$ npm install pg --save
+$ npm install --save
+{% endhighlight %}
+
+Or git clone final source for reference and reuse:
+{% highlight bash %}
+$ https://github.com/KevGary/node.js-postgresql-demo
+{% endhighlight %}
+
+##Tutorial
+
+###Create database
+Open up your machine's terminal then the psql interactive terminal and create a database called pg_demo_db:
+{% highlight psql %}
+postgres=# CREATE DATABASE pg_demo_db;
+{% endhighlight %}
+
+###Initial routes/index.js in Express
+Let's open the node.js-postgresql-demo in our favorite text editor and take a look at /routes/index.js.  Remove the default route and load the pg package from node_modules:
+{% highlight javascript %}
+var express = require('express');
+var router = express.Router();
+//pg config
+var pg = require('pg');
+
+module.exports = router;
+{% endhighlight %}
+Now add the connection string to pg_demo_db to the routes/index.js file:
+{% highlight javascript %}
+var conString = 'postgres://@localhost/pg_demo_db';
+{% endhighlight %}
+You can include the user/password (user also known as role or username) in the connection string, and within your machine's pg_hba.conf settings can enable/disable this as a requirement.  This connection string would look like:
+{% highlight javascript %}
+var conString = 'postgres://username:password@localhost/pg_demo_db';
+{% endhighlight %}
+Again, username is the going to be the role that is the owner of pg_demo_db, and password will be that role's password.
+
+Typically, connection strings are stored in an environment variable for security purposes.  To do this in Node.js, create an empty .env file and store the connection string value in a variable.  We'll call it DATABASE_URL:
+{% highlight raw %}
+DATABASE_URL=postgres://@localhost/pg_demo_db
+{% endhighlight %}
+In terminal, go to the root of the project directory and install dotenv:
+{% highlight bash %}
+$ npm install dotenv --save
+{% endhighlight %}
+And in /app.js, somewhere before 
+{% highlight javascript %}var routes = require('./routes/index');
+{% endhighlight %}
+load dotenv:
+{% highlight javascript %}
+require('dotenv').load();
+{% endhighlight %}
+__Add .env to the .gitignore file to avoid pushing environment variables up to github.__
+
+Now we can use this environment variable safely in the rest of our application.  In routes/index.js, change the value of conString:
+{% highlight javascript %}
+var conString = process.env.DATABASE_URL;
+{% endhighlight %}
+
+###Simple Migrations
+In the root of the node.js-postgresql-demo directory create a folder named migrations and three files- schema.up.sql, schema.down.sql, and seed.sql:
+{% highlight bash %}
+$ mkdir migrations
+$ cd migrations
+$ touch schema.up.sql schema.down.sql seed.sql
+{% endhighlight %}
+Let's say we're building an app that requires a database with users and posts.  Put CREATE TABLE commands in the migrations/schema.up.sql file:
+{% highlight postgres %}
+CREATE TABLE users (
+  id serial primary key,
+  username varchar(60),
+  password varchar(60)
+);
+CREATE TABLE posts (
+  id serial primary key,
+  user_id integer references users(id) on delete cascade,
+  content varchar(200)
+);
+{% endhighlight %}
+And place DROP TABLE commands in the migrations/schema.down.sql file:
+{% highlight postgres %}
+DROP TABLE IF EXISTS users cascade;
+DROP TABLE IF EXISTS posts cascade;
+{% endhighlight %}
+Finally, we can seed, or preload, data into our database in the migrations/seed.sql file:
+{% highlight postgres %}
+INSERT INTO
+  users
+VALUES 
+  ( default, 'Richard Smith', 'bananas'),
+  ( default, 'John Applegate', 'avocados'),
+  ( default, 'Sally Rallycaps', 'sevendoors'),
+  ( default, 'Tia Mamamia', 'redsuits');
+
+INSERT INTO
+  posts
+VALUES
+  ( default, (SELECT id FROM users WHERE id = 1), 'When hippos are upset, their sweat turns red.'),
+  ( default, (SELECT id FROM users WHERE id = 2), 'If you lift a kangaroo’s tail off the ground it can’t hop.'),
+  ( default, (SELECT id FROM users WHERE id = 4), 'If you consistently fart for 6 years & 9 months, enough gas is produced to create the energy of an atomic bomb!'),
+  ( default, (SELECT id FROM users WHERE id = 3), 'The average woman uses her height in lipstick every 5 years.');
+{% endhighlight %}
+To perform these migrations on the postgres server, open your machine terminal and in the root of the project directory:
+
+Create tables:
+{% highlight bash %}
+$ psql pg_demo_db < migrations/schema.up.sql
+{% endhighlight %}
+Seed data into tables:
+{% highlight bash %}
+$ psql pg_demo_db < migrations/seed.sql
+{% endhighlight %}
+Delete tables:
+{% highlight bash %}
+$ psql pg_demo_db < migrations/schema.down.sql
+{% endhighlight %}
+
+Now we have a database named pg_demo_db with two tables, users and posts, each with unique columns and four arbitrary rows.
+
+###Database endpoints in Node.js
+This is very similar to a Node.js Express API.  However, here we are building out our endpoints to talk to the PostgreSQL database and send us back whatever we're looking for.  Start by constructing five endpoints for the 'users' table- get all, get one, post, update, and delete one.  Here is the entire routes/index.js file:
+{% highlight javascript %}
+var express = require('express');
+var router = express.Router();
+
+//pg config
+var pg = require('pg');
+var conString = 'postgres://@localhost/pg_demo_db';
+
+//Users
+//get all users
+router.get('/users', function(req, res, next) {
+  pg.connect(conString, function(err, client, done) {
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
+    console.log("connected to database");
+    client.query('SELECT * FROM users', function(err, result) {
+      done();
+      if (err) {
+        return console.error('error running query', err);
+      }
+      res.send(result);
+    });
+  });
+});
+//post user
+router.post('/users', function(req, res, next) {
+  pg.connect(conString, function(err, client, done) {
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
+    console.log("connected to database");
+    client.query('INSERT INTO users(username, password) VALUES($1, $2) returning id', [req.body.username, req.body.password], function(err, result) {
+      done();
+      if(err) {
+        return console.error('error running query', err);
+      }
+      res.send(result);
+    });
+  });
+});
+//get one user
+router.get('/users/:id', function(req, res, next) {
+  pg.connect(conString, function(err, client, done) {
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
+    console.log("connected to database");
+    client.query('SELECT * FROM users WHERE id = $1', [req.params.id], function(err, result) {
+      done();
+      if (err) {
+        return console.error('error running query', err);
+      }
+      res.send(result);
+    });
+  });
+});
+// update user
+router.put('/users/:id', function(req, res, next) {
+  pg.connect(conString, function(err, client, done) {
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
+    console.log("connected to database");
+    //compare with .compareSync(req.body.data.attributes.password, storedPW)
+    client.query('UPDATE users SET username = $2, password = $3  WHERE id = $1', [req.params.id, req.body.username, req.body.password], function(err, result) {
+      done();
+      if (err) {
+        return console.error('error running query', err);
+      }
+      res.send(result);
+    });
+  });
+});
+//delete one user
+router.delete('/users/:id', function(req, res, next) {
+  pg.connect(conString, function(err, client, done) {
+     console.log(conString)
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
+    console.log("connected to database");
+    client.query('DELETE FROM users WHERE id = $1',[req.params.id], function(err, result) {
+      done();
+      if (err) {
+        return console.error('error running query', err);
+      }
+      res.send(result);
+    });
+  });
+});
+
+module.exports = router;
+{% endhighlight %}
+#####__note:__ the conString is used to connect to the pg_demo_db
+In a nearly identical fashion, we can write the same endpoints for the 'posts' table:
+{% highlight javascript %}
+//-------------
+//Posts
+//get all posts
+router.get('/posts', function(req, res, next) {
+  pg.connect(conString, function(err, client, done) {
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
+    console.log("connected to database");
+    client.query('SELECT * FROM posts', function(err, result) {
+      done();
+      if (err) {
+        return console.error('error running query', err);
+      }
+      res.send(result);
+    });
+  });
+});
+//post one post
+router.post('/posts', function(req, res, next) {
+  pg.connect(conString, function(err, client, done) {
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
+    console.log("connected to database");
+    client.query('INSERT INTO posts(user_id, content) VALUES($1, $2) returning id', [req.body.user_id, req.body.content], function(err, result) {
+      done();
+      if(err) {
+        return console.error('error running query', err);
+      }
+      res.send(result);
+    });
+  });
+});
+//get one post
+router.get('/posts/:id', function(req, res, next) {
+  pg.connect(conString, function(err, client, done) {
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
+    console.log("connected to database");
+    client.query('SELECT * FROM posts WHERE id = $1', [req.params.id], function(err, result) {
+      done();
+      if (err) {
+        return console.error('error running query', err);
+      }
+      res.send(result);
+    });
+  });
+});
+// update one post
+router.put('/posts/:id', function(req, res, next) {
+  pg.connect(conString, function(err, client, done) {
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
+    console.log("connected to database");
+    client.query('UPDATE posts SET user_id = $2, content = $3  WHERE id = $1', [req.params.id, req.body.user_id, req.body.content], function(err, result) {
+      done();
+      if (err) {
+        return console.error('error running query', err);
+      }
+      res.send(result);
+    });
+  });
+});
+//delete one post
+router.delete('/posts/:id', function(req, res, next) {
+  pg.connect(conString, function(err, client, done) {
+     console.log(conString)
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
+    console.log("connected to database");
+    client.query('DELETE FROM posts WHERE id = $1',[req.params.id], function(err, result) {
+      done();
+      if (err) {
+        return console.error('error running query', err);
+      }
+      res.send(result);
+    });
+  });
+});
+{% endhighlight %}
+
+###Testing with Postman
+Run the Node.js server.  There are a few ways to do this.  I highly suggest downloading and using with [nodemon](http://nodemon.io/).  It refreshes the server automatically when files are changed instead of having to do it manually.  The following terminal commands work as well:
+{% highlight bash %}
+$ node bin/www
+{% endhighlight %}
+__or__
+{% highlight bash %}
+$ npm start
+{% endhighlight %}
+Download this awesome API tool, [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en).
+
+Once installed, open Postman and let's test our endpoints.  Provided that your Node.js server is running on the default port 3000 and that you did not require a username and password in the connection string, the test cases are as given below.  You should see successful 200 responses with data upon each request in both your Postman app and in the running node server terminal window.
+
+#####__note:__ if user/password is required in connection string, change all connection strings in examples below to http://username:password@localhost:3000/endpoint-here
+
+####GET USERS/POSTS
+![GET all](/images/getAll.png)
+
+####GET USER/POST
+![GET one](/images/getOne.png)
+
+####POST USER/POST
+![POST one](/images/post.png)
+To provide req.body to this endpoint upon request, click the 'Body' tab underneath the bar shown in picture, select raw, and build the object:
+
+For users:
+{% highlight javascript %}
+{
+  "username": "example_username",
+  "password": "example_password"
+}
+{% endhighlight %}
+
+For posts:
+{% highlight javascript %}
+{
+  "user_id": 2,
+  "content": "example_content"
+}
+{% endhighlight %}
+####UPDATE USER/POST
+![UPDATE one](/images/update.png)
+
+####DELETE USER/POST
+![DELETE one](/images/deleteOne.png)
+
+
+
+
