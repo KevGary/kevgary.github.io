@@ -25,7 +25,7 @@ Once you have installed PostgreSQL on your machine, you should be able to access
 $ psql
 {% endhighlight %}
 And to exit the shell:
-{% highlight bash %}
+{% highlight psql %}
 postgres=# \q
 {% endhighlight %}
 You are given a user by default, typically named postgres.  If exited, reenter the postgres interactive terminal:
@@ -33,7 +33,7 @@ You are given a user by default, typically named postgres.  If exited, reenter t
 $ psql
 {% endhighlight %}
 And once in the shell, list your postgres users:
-{% highlight bash %}
+{% highlight psql %}
 postgres=# SELECT * FROM pg_user;
 {% endhighlight %}
 Press q to exit.
@@ -58,7 +58,7 @@ From the Mac OS X terminal:
 $ createdb sameAsUsernameJustMade
 {% endhighlight %}
 __Or__ from the psql interactive terminal:
-{% highlight bash %}
+{% highlight psql %}
 postgres=# CREATE DATABASE sameAsUsernameJustMade;
 postgres=# \q
 {% endhighlight %}
@@ -68,7 +68,7 @@ Now, login as yourNewUsername from Mac OS X terminal:
 $ psql -U yourNewUsername
 {% endhighlight %}
 And you should see yourNewUsername as the current user in place of what it was before (again, typically postgres or Home).
-{% highlight bash %}
+{% highlight psql %}
 yourNewUsername=# SELECT * FROM pg_user;
 {% endhighlight %}
 And we should see both our default user and new user.  Press q to exit list. 
@@ -80,17 +80,17 @@ $ psql -U yourNewUsername
 yourNewUsername=# CREATE DATABASE sampleDB;
 {% endhighlight %}
 List all databases:
-{% highlight bash %}
+{% highlight psql %}
 yourNewUsername=# \l
 {% endhighlight %}
 Under name should be sampleDB and the Owner should be yourNewUsername.  Similarly, the db you created with the same username as yourNewUsername should have the Owner of the default user provided upon installation.
 
 To check what you're connected to at any given time:
-{% highlight bash %}
+{% highlight psql %}
 yourNewUsername=# \c 
 {% endhighlight %}
 To connect to a different database:
-{% highlight bash %}
+{% highlight psql %}
 yourNewUsername=# \c nameOfDatabase
 {% endhighlight %}
 ###Drop database
@@ -99,61 +99,61 @@ From the Mac OS X terminal:
 $ dropdb nameOfDatabase
 {% endhighlight %}
 __Or__ from the psql interactive terminal:
-{% highlight bash %}
+{% highlight psql %}
 postgres=# DROP DATABASE nameOfDatabase;
 {% endhighlight %}
 
 ###Create table
 Let's connect to our sampleDB database and create two new tables; 'users' with usernames and passwords, and 'comments' with a user_id (reference to an id in 'users') and content.  Both will haveas an id that will be a serial primary key, meaning each id will be unique and non-recurring:
-{% highlight bash %}
+{% highlight psql %}
 yourNewUserName=# \c sampleDB
 sampleDB=# CREATE TABLE users (id serial primary key, username varchar(60), password varchar(60));
 {% endhighlight %}
 A success message will apper, CREATE TABLE, once entered.  Now for the 'comments' table:
-{% highlight bash %}
+{% highlight psql %}
 sampleDB=# CREATE TABLE comments (id serial primary key, user_id integer references users(id) on delete cascade, content varchar(200));
 {% endhighlight %}
 Now to view our tables within the sampleDB:
-{% highlight bash %}
+{% highlight psql %}
 sampleDB=# \dt
 {% endhighlight %}
 ###Update table
 
 ####Add rows
 To insert three rows into the 'users' table:
-{% highlight bash %}
+{% highlight psql %}
 sampleDB=# INSERT INTO users VALUES ( default, 'a username', 'a password'), ( default, 'another username', 'another password'), ( default, 'a third username', 'a third password');
 {% endhighlight %}
 Where the order of values within the parentheses correspond to the columns of the given table.
 
 To insert two rows into the 'comments' table:
-{% highlight bash %}
+{% highlight psql %}
 sampleDB=# INSERT INTO comments VALUES ( default, (SELECT id FROM users WHERE username = 'a username'), 'some comment'), ( default, (SELECT id FROM users WHERE username = 'a third username'), 'some comment');
 {% endhighlight %}
 
 ####Delete rows
 To delete the row in 'users' where id = 2 (i.e. the second row):
-{% highlight bash %}
+{% highlight psql %}
 sampleDB=# DELETE FROM users WHERE id = 2;
 {% endhighlight %}
 To delte the row in 'users' where username = 'a username':
-{% highlight bash %}
+{% highlight psql %}
 sampleDB=# DELETE FROM users WHERE username = 'username';
 {% endhighlight %}
 To delete the row in 'comments' where user_id = 3:
-{% highlight bash %}
+{% highlight psql %}
 sampleDB=# DELETE FROM comments WHERE user_id = 3;
 {% endhighlight %}
 ###Dop table
 For the 'users' table:
-{% highlight bash %}
+{% highlight psql %}
 sampleDB=# DROP TABLE IF EXISTS users cascade;
 {% endhighlight %}
 For the 'comments' table:
-{% highlight bash %}
+{% highlight psql %}
 sampleDB=# DROP TABLE IF EXISTS table cascade;
 {% endhighlight %}
 Cascade is only necessary if there are references from one table to another. If 'comments' didnt exist we could drop 'users' by simply:
-{% highlight bash %}
+{% highlight psql %}
 sampleDB=# DROP TABLE IF EXISTS users;
 {% endhighlight %}
