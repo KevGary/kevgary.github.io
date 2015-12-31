@@ -18,7 +18,7 @@ $ cd my-http-angularjs-demo
 $ touch index.html ng-app.js
 {% endhighlight %}
 
-Or git clone final source for reference and reuse:
+Or git clone final source code for reference and reuse:
 {% highlight bash %}
 $ git clone https://github.com/KevGary/http-angularjs-demo
 {% endhighlight %}

@@ -1,6 +1,0 @@
----
-layout: post
-title:  "Build a Node.js Express API"
-date:   2015-12-28 14:35:29 -0400
-categories: tutorials
----

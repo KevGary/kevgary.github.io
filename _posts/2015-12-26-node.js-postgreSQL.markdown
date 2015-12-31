@@ -17,7 +17,7 @@ $ npm install pg --save
 $ npm install --save
 {% endhighlight %}
 
-Or git clone final source for reference and reuse:
+Or git clone final source code for reference and reuse:
 {% highlight bash %}
 $ https://github.com/KevGary/node.js-postgresql-demo
 {% endhighlight %}
