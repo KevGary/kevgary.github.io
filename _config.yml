@@ -11,8 +11,9 @@ email: kevgary.dev@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   devScripts is a resource for developers on the pursuit of knowledge. As one himself, this is where I share the useful technologies and techniques I come across and find relevant to building cool things.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://yourdomain.com" # the base hostname & protocol for your site
+url: "http://kevgary.github.io/" # the base hostname & protocol for your site
 github_username:  KevGary
+resume: Resume
 
 # Build settings
 markdown: kramdown

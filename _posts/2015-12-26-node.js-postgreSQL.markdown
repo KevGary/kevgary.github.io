@@ -342,7 +342,7 @@ Once installed, open Postman and let's test our endpoints.  Provided that your N
 To provide req.body to this endpoint upon request, click the 'Body' tab underneath the bar shown in picture, select raw, and build the object:
 
 For users:
-{% highlight javascript %}
+{% highlight json %}
 {
   "username": "example_username",
   "password": "example_password"
@@ -350,7 +350,7 @@ For users:
 {% endhighlight %}
 
 For posts:
-{% highlight javascript %}
+{% highlight json %}
 {
   "user_id": 2,
   "content": "example_content"

@@ -5,8 +5,7 @@ date:   2015-12-24 14:35:29 -0400
 categories: tutorials
 ---
 ##Overview
-This is an introduction intended to get a Mac OS X user off the ground and running locally with PostgreSQL.  Included is how to install postgres, connect to the psql]
-q interactive terminal, set up a new user/password, create and delete databases, as well as how to create, update, and delete tables and table content.
+This is an introduction intended to get a Mac OS X user off the ground and running locally with PostgreSQL.  Included is how to install postgres, connect to the psql interactive terminal, set up a new user/password, create and delete databases, as well as how to create, update, and delete tables and table content.
 
 ##Getting Started
 Let's download [PostgreSQL](http://www.postgresql.org/download/macosx/) on your machine.  

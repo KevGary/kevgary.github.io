@@ -137,18 +137,14 @@ The final production code, also found at [https://github.com/KevGary/http-angula
 <html ng-app="httpDemo">
 <head>
   <title>HTTP AngularJS Demo</title>
-  <link rel="stylesheet" type="text/css" href="main.css">
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.2/angular-material.min.css">
 </head>
 <body ng-controller="GlobalController">
+
   <input type="text" ng-model="searchValue">
   <button ng-click="get(searchValue)">search</button>
   <div class="result">{% raw %}{{result}}{% endraw %}</div>
 
-  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular-route.min.js"></script>
   <script type="text/javascript" src="ng-app.js"></script>
 </body>

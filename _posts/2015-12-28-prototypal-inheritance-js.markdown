@@ -4,6 +4,8 @@ title:  "Prototypal Inheritance in JavaScript"
 date:   2015-12-28 14:35:29 -0400
 categories: tutorials
 ---
+####Source: [https://github.com/KevGary/prototypal-inheritance-js-demo](https://github.com/KevGary/prototypal-inheritance-js-demo)
+
 ##Overview
 
 ##Getting Started
@@ -14,7 +16,10 @@ $ cd prototypal-inheritance-js-demo
 $ touch television.js company.js dice.js high-roller.js
 {% endhighlight %}
 
-Or git clone final source code for reference and reuse: 
+Or git clone final source code for reference and reuse:
+{% highlight bash %}
+$ git clone https://github.com/KevGary/prototypal-inheritance-js-demo
+{% endhighlight %}
 
 ##Tutorial
 
@@ -132,7 +137,7 @@ Television.prototype.sellTV = function(quantitySold) {
   }
 };
 {% endhighlight %}
-Refactor prototype methods for cleanliness:
+Refactor prototype methods for to keep things clean:
 {% highlight javascript %}
 Television.prototype = {
   buyTV: function(quantityBought) {
@@ -253,7 +258,6 @@ var playerTwo = new DiceInstance(6, 2);
 
 function HighRoller(numberOfPlayers, numberOfTurns) {
   this.numberOfPlayers = numberOfPlayers || 2;
-  this.numberOfTurns = numberOfTurns || 1;
 }
 HighRoller.prototype = {
   play: function () {
@@ -279,9 +283,9 @@ HighRoller.prototype = {
 var gameInstance = new HighRoller();
 console.log(gameInstance.play(playerOne.roll(), playerTwo.roll()));
 {% endhighlight %}
-HighRoller is yet another constructor function and its prototype has the method play.  play takes in all players' rolls, sums them individually, and returns the round's score and winner determined by highest score.  [Github project's](link) shows HighRoller being played with three players.
+HighRoller is yet another constructor function and its prototype has the method play.  play takes in all players' rolls, sums them individually, and returns the round's score and winner determined by highest score.  The [Github project](https://github.com/KevGary/prototypal-inheritance-js-demo) shows HighRoller being played with three players.
 
-The /dice.js file can be required in the same way in as many files as needed.  There's a lot of possible dice games.    
+The /dice.js file can be required in the same way in as many files as needed.   
 
 
 
