@@ -60,9 +60,9 @@ app.controller('GlobalController', function ($scope) {
 });
 {% endhighlight %}
  
-In order for us to make http requests in AngularJS, we will make use of two angular services, [$http](https://docs.angularjs.org/api/ng/service/$http) and [$q](https://docs.angularjs.org/api/ng/service/$q).  $http allows us to make AJAX calls, and $q allows us to perform promise based operations.  In the next couple examples, we will be making an AJAX GET request to retrieve the data sent down by reddit when a user would search for 'ferrari' on [https://www.reddit.com/](https://www.reddit.com/).
+In order for us to make http requests in AngularJS, we will make use of two angular services, [$http](https://docs.angularjs.org/api/ng/service/$http) and [$q](https://docs.angularjs.org/api/ng/service/$q).  $http allows us to make HTTP calls, and $q allows us to perform promise based operations.  In the next couple examples, we will be making an HTTP GET request to retrieve the data sent down by reddit when a user would search for 'ferrari' on [https://www.reddit.com/](https://www.reddit.com/).
 
-__THE WRONG WAY__ would be to inject $http into the controller and perform the AJAX calls inside the controller: 
+__THE WRONG WAY__ would be to inject $http into the controller and perform the HTTP calls inside the controller: 
 {% highlight javascript %}
 app.controller('GlobalController', function ($scope, $http, $q) {
   $scope.get = function () {
@@ -96,7 +96,7 @@ app.factory('httpFactory', function ($http) {
   }
 });
 {% endhighlight %}
-Awesome! We now have a http factory with a GET method to the reddit API we can use in any controller, as many times as we want.  This is a far superior approach than writing out the same AJAX calls everytime we want to use one.
+Awesome! We now have a http factory with a GET method to the reddit API we can use in any controller, as many times as we want.  This is a far superior approach than writing out the same HTTP calls everytime we want to use one.
 
 Now, lets add a text input to the view above our search button and search reddit for whatever the user wants:
 {% highlight html %}
@@ -124,7 +124,7 @@ app.factory('httpFactory', function ($http) {
   }
 });
 {% endhighlight %}
-Now we are making an AJAX request to the reddit api with our user's text input.
+Now we are making an HTTP request to the reddit api with our user's text input.
 
 ##Conclusion
 In this demo, we built out a simple AngularJS front end that consumes the Reddit API through using a http factory.  To detail our MVC design- the 'ng-click=get(search)' (index.html:11) is the user input from the view index.html), the controller 'GlobalController' receives the input from the view and calls the httpFactory where our data model, json data from reddit, is retrieved.  Our controller then applies the gathered data from the model to the view with $scope.result (ng-app.js:7), displayed using angular syntax, {% raw %}{{result}}{% endraw %} (index.html:12).
