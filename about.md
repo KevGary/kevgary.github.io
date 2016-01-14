@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-Hello! My name is Kevin Gary and I am a huge Node.js junkie and obese API consumer.
+Hello! My name is Kevin and I am a huge Node.js junkie and obese API consumer.
 
 ##Projects
 
